@@ -14,7 +14,7 @@ namespace IceCity.EFCore.Entities
         public string Email { get; set; }
         public  string Phone { get; set; }
         public List <House> Houses { get; set; } = new List<House>();
-        public bool IsDeleted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTime? DateDeleted { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsDeleted { get; set; }
+        public DateTime? DateDeleted { get; set; }
     }
 }

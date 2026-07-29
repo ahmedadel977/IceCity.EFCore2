@@ -1,4 +1,5 @@
-﻿using IceCity.EFCore.Entities;
+﻿using IceCity.EFCore.Date.intercaptor;
+using IceCity.EFCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -29,6 +30,10 @@ namespace IceCity.EFCore.Data
             var constr = configuration.GetSection("constr").Value;
 
             optionsBuilder.UseSqlServer(constr);
+            optionsBuilder.AddInterceptors(new SoftDeleteInterceptor());
+
+
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
