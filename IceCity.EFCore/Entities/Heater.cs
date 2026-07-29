@@ -9,6 +9,7 @@
         public string HeaterType { get; set; } = null!;
 
         public decimal PowerValue { get; set; }
+        public byte[] RowVersion { get; set; }
 
         
         public House House { get; set; } = null!;

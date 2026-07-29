@@ -14,7 +14,7 @@ namespace IceCity.EFCore.Data.conf
             builder.Property(x => x.HeaterType)
                 .HasMaxLength(50)
                 .IsRequired();
-
+            builder.Property(x => x.RowVersion).IsRowVersion();
             builder.Property(x => x.PowerValue)
                 .HasPrecision(10, 2);
 

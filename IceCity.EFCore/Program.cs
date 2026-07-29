@@ -1,7 +1,10 @@
 ﻿using IceCity.EFCore.Data;
 using IceCity.EFCore.Entities;
+using IceCity.EFCore.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Drawing;
+using System.Linq;
 
 namespace IceCity.EFCore
 {
@@ -10,9 +13,11 @@ namespace IceCity.EFCore
         static void  Main(string[] args)
         {
 
+            SimulateConcurrency();
 
 
-            
+
+
 
 
 
@@ -99,7 +104,7 @@ namespace IceCity.EFCore
                 context.Owners.Remove(deleteOwner);
                 Console.WriteLine(context.Entry(deleteOwner).State);
 
-                // إذا أردت تنفيذ الحذف
+                
                 context.SaveChanges();
 
 
@@ -127,6 +132,140 @@ namespace IceCity.EFCore
 
 
         }
+        static void EagerLoading()
+        {
+            using var context = new AppDbContext();
+
+            var owners = context.Owners
+                .Include(o => o.Houses)
+                    .ThenInclude(h => h.heaters)
+                        .ThenInclude(h => h.DailyUsages)
+                .ToList();
+
+            foreach (var owner in owners)
+            {
+                Console.WriteLine($"Owner: {owner.Name}");
+
+                foreach (var house in owner.Houses)
+                {
+                    Console.WriteLine($"  House: {house.Address}");
+
+                    foreach (var heater in house.heaters)
+                    {
+                        Console.WriteLine($"    Heater: {heater.HeaterType}");
+
+                        foreach (var usage in heater.DailyUsages)
+                        {
+                            Console.WriteLine($"      {usage.UsageDate:d} - {usage.HoursWorked} Hours");
+                        }
+                    }
+                }
+            }
+        }
+        static void HousesPagination(int pageNumber)
+        {
+            using (var context = new AppDbContext())
+            {
+                int size = 10;
+                int total=context.Houses.Count();
+                int totalpage=(int)Math.Ceiling((double)total/size);
+                if (pageNumber > 0&&pageNumber<=totalpage)
+                {
+                    var houses = context.Houses.OrderBy(h=>h.HouseId).Skip((pageNumber-1)*size).Take(size);
+                    foreach (var house in houses)
+                    {
+                        Console.WriteLine($"{house.HouseId} - {house.Address}");
+                    }
+
+                }
+
+
+
+            }
+        }
+        static void GenerateMonthlyReport()
+
+        {
+            using var context = new AppDbContext();
+
+            using var transaction = context.Database.BeginTransaction();
+
+            try
+            {
+                
+                var usage = new DailyUsage
+                {
+                    HeaterId = 1,
+                    UsageDate = DateTime.Now,
+                    HoursWorked = 6
+                };
+
+                context.DailyUsages.Add(usage);
+                context.SaveChanges();
+
+                var totalHours = context.DailyUsages
+                    .Where(d => d.HeaterId == usage.HeaterId &&
+                                d.UsageDate.Month == DateTime.Now.Month &&
+                                d.UsageDate.Year == DateTime.Now.Year)
+                    .Sum(d => d.HoursWorked);
+
+                decimal rate = 2; 
+                decimal totalCost = totalHours * rate;
+
+                
+                var report = new MonthlyReport
+                {
+                    HouseId = usage.Heater.HouseId,
+                    ReportMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
+                    MonthlyAverageCost = totalCost
+                };
+
+                context.MonthlyReports.Add(report);
+                context.SaveChanges();
+
+                transaction.Commit();
+
+                Console.WriteLine("Monthly report generated successfully.");
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                Console.WriteLine(ex.Message);
+            }
+        }
+        static void SimulateConcurrency()
+        {
+            using var context1 = new AppDbContext();
+            using var context2 = new AppDbContext();
+
+            var heater1 = context1.Heaters.First(h => h.HeaterId == 1);
+            var heater2 = context2.Heaters.First(h => h.HeaterId == 1);
+
+           
+            heater1.PowerValue =2500;
+            context1.SaveChanges();
+
+            Console.WriteLine("Engineer 1 updated the heater.");
+
+            
+            heater2.PowerValue= 3000;
+
+            try
+            {
+                context2.SaveChanges();
+                Console.WriteLine("Engineer 2 updated the heater.");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                Console.WriteLine("Concurrency conflict!");
+                Console.WriteLine("Another engineer has already modified this heater.");
+            }
+        }
+
+
+
+
 
 
     }

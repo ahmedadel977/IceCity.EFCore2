@@ -20,7 +20,8 @@ namespace IceCity.EFCore.Data.conf
                 .HasMaxLength(100).IsRequired();
             builder.Property(x => x.Email).HasColumnType("VARCHAR")
              .HasMaxLength(50).IsRequired();
-            builder.Property(x => x.Phone).HasColumnType("VARCHAR").HasMaxLength(11).IsRequired(); ;
+            builder.Property(x => x.Phone).HasColumnType("VARCHAR").HasMaxLength(11).IsRequired(); 
+            builder.HasQueryFilter(p => p.IsDeleted == true);
             builder.ToTable("Owners");
 
         }
