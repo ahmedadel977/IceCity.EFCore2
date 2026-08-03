@@ -1,51 +1,48 @@
-﻿using IceCity.EFCore.Data;
-using IceCity.EFCore.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IceCity.EFCore.Entities;
 
-namespace IceCity.EFCore.services
+using IceCity.EFCore2.Repositories.Interfaces;
+
+namespace IceCity.EFCore.Services;
+
+public class OwnerService
 {
-    public class OwnerService
+    private readonly IOwnerRepository repository;
+
+    public OwnerService(IOwnerRepository repository)
     {
-        private readonly AppDbContext context;
-        public OwnerService(AppDbContext context)
-        {
-            this.context = context;
-        }
-        public void Create(Owner owner)
-        {
-            context.Add<Owner>(owner);
-            context.SaveChanges();
-        }
-        public void Update(Owner owner)
-        {
-            context.Owners.Update(owner);
-            context.SaveChanges();
-        }
-        public void Delete(int id)
-        {
-            var owner = context.Owners.Find(id);
-            if (owner != null)
-            {
-                context.Owners.Remove(owner);
-                context.SaveChanges();
+        this.repository = repository;
+    }
 
-            }
-        }
-        public Owner GetByid(int id)
-        {
+    public async Task CreateAsync(Owner owner)
+    {
+        await repository.AddAsync(owner);
+        await repository.SaveChangesAsync();
+    }
 
-            return context.Owners.Find( id) as Owner;
+    public async Task UpdateAsync(Owner owner)
+    {
+        repository.Update(owner);
+        await repository.SaveChangesAsync();
+    }
 
+    public async Task DeleteAsync(int id)
+    {
+        var owner = await repository.GetByIdAsync(id);
 
-        }
-        public List<Owner> GetAll()
-        {
-            return context.Owners.ToList();
-        }
+        if (owner is null)
+            return;
+
+        repository.Delete(owner);
+        await repository.SaveChangesAsync();
+    }
+
+    public async Task<Owner?> GetByIdAsync(int id)
+    {
+        return await repository.GetByIdAsync(id);
+    }
+
+    public async Task<List<Owner>> GetAllAsync()
+    {
+        return (await repository.GetAllAsync()).ToList();
     }
 }
-

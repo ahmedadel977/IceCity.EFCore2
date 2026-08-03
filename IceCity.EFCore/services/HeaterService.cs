@@ -1,47 +1,47 @@
-﻿using IceCity.EFCore.Data;
-using IceCity.EFCore.Entities;
+﻿using IceCity.EFCore.Entities;
+using IceCity.EFCore2.Repositories.Interfaces;
 
 namespace IceCity.EFCore.Services;
 
 public class HeaterService
 {
-    private readonly AppDbContext context;
+    private readonly IHeaterRepository repository;
 
-    public HeaterService(AppDbContext context)
+    public HeaterService(IHeaterRepository repository)
     {
-        this.context = context;
+        this.repository = repository;
     }
 
-    public void Create(Heater heater)
+    public async Task CreateAsync(Heater heater)
     {
-        context.Heaters.Add(heater);
-        context.SaveChanges();
+        await repository.AddAsync(heater);
+        await repository.SaveChangesAsync();
     }
 
-    public List<Heater> GetAll()
+    public async Task<List<Heater>> GetAllAsync()
     {
-        return context.Heaters.ToList();
+        return (await repository.GetAllAsync()).ToList();
     }
 
-    public Heater? GetById(int id)
+    public async Task<Heater?> GetByIdAsync(int id)
     {
-        return context.Heaters.Find(id);
+        return await repository.GetByIdAsync(id);
     }
 
-    public void Update(Heater heater)
+    public async Task UpdateAsync(Heater heater)
     {
-        context.Heaters.Update(heater);
-        context.SaveChanges();
+        repository.Update(heater);
+        await repository.SaveChangesAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var heater = context.Heaters.Find(id);
+        var heater = await repository.GetByIdAsync(id);
 
-        if (heater != null)
-        {
-            context.Heaters.Remove(heater);
-            context.SaveChanges();
-        }
+        if (heater is null)
+            return;
+
+        repository.Delete(heater);
+        await repository.SaveChangesAsync();
     }
 }

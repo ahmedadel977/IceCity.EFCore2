@@ -1,47 +1,47 @@
-﻿using IceCity.EFCore.Data;
-using IceCity.EFCore.Entities;
+﻿using IceCity.EFCore.Entities;
+using IceCity.EFCore2.Repositories.Interfaces;
 
 namespace IceCity.EFCore.Services;
 
 public class DailyUsageService
 {
-    private readonly AppDbContext context;
+    private readonly IDailyUsageRepository repository;
 
-    public DailyUsageService(AppDbContext context)
+    public DailyUsageService(IDailyUsageRepository repository)
     {
-        this.context = context;
+        this.repository = repository;
     }
 
-    public void Create(DailyUsage dailyUsage)
+    public async Task CreateAsync(DailyUsage dailyUsage)
     {
-        context.DailyUsages.Add(dailyUsage);
-        context.SaveChanges();
+        await repository.AddAsync(dailyUsage);
+        await repository.SaveChangesAsync();
     }
 
-    public List<DailyUsage> GetAll()
+    public async Task<List<DailyUsage>> GetAllAsync()
     {
-        return context.DailyUsages.ToList();
+        return (await repository.GetAllAsync()).ToList();
     }
 
-    public DailyUsage? GetById(int id)
+    public async Task<DailyUsage?> GetByIdAsync(int id)
     {
-        return context.DailyUsages.Find(id);
+        return await repository.GetByIdAsync(id);
     }
 
-    public void Update(DailyUsage dailyUsage)
+    public async Task UpdateAsync(DailyUsage dailyUsage)
     {
-        context.DailyUsages.Update(dailyUsage);
-        context.SaveChanges();
+        repository.Update(dailyUsage);
+        await repository.SaveChangesAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var dailyUsage = context.DailyUsages.Find(id);
+        var dailyUsage = await repository.GetByIdAsync(id);
 
-        if (dailyUsage != null)
-        {
-            context.DailyUsages.Remove(dailyUsage);
-            context.SaveChanges();
-        }
+        if (dailyUsage is null)
+            return;
+
+        repository.Delete(dailyUsage);
+        await repository.SaveChangesAsync();
     }
 }

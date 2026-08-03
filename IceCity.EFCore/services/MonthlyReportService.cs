@@ -1,47 +1,48 @@
-﻿using IceCity.EFCore.Data;
-using IceCity.EFCore.Entities;
+﻿using IceCity.EFCore.Entities;
+
+using IceCity.EFCore2.Repositories.Interfaces;
 
 namespace IceCity.EFCore.Services;
 
 public class MonthlyReportService
 {
-    private readonly AppDbContext context;
+    private readonly IMonthlyReportRepository repository;
 
-    public MonthlyReportService(AppDbContext context)
+    public MonthlyReportService(IMonthlyReportRepository repository)
     {
-        this.context = context;
+        this.repository = repository;
     }
 
-    public void Create(MonthlyReport report)
+    public async Task CreateAsync(MonthlyReport report)
     {
-        context.MonthlyReports.Add(report);
-        context.SaveChanges();
+        await repository.AddAsync(report);
+        await repository.SaveChangesAsync();
     }
 
-    public List<MonthlyReport> GetAll()
+    public async Task<List<MonthlyReport>> GetAllAsync()
     {
-        return context.MonthlyReports.ToList();
+        return (await repository.GetAllAsync()).ToList();
     }
 
-    public MonthlyReport? GetById(int id)
+    public async Task<MonthlyReport?> GetByIdAsync(int id)
     {
-        return context.MonthlyReports.Find(id);
+        return await repository.GetByIdAsync(id);
     }
 
-    public void Update(MonthlyReport report)
+    public async Task UpdateAsync(MonthlyReport report)
     {
-        context.MonthlyReports.Update(report);
-        context.SaveChanges();
+        repository.Update(report);
+        await repository.SaveChangesAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var report = context.MonthlyReports.Find(id);
+        var report = await repository.GetByIdAsync(id);
 
-        if (report != null)
-        {
-            context.MonthlyReports.Remove(report);
-            context.SaveChanges();
-        }
+        if (report is null)
+            return;
+
+        repository.Delete(report);
+        await repository.SaveChangesAsync();
     }
 }

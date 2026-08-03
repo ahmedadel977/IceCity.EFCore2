@@ -1,47 +1,48 @@
-﻿using IceCity.EFCore.Data;
-using IceCity.EFCore.Entities;
+﻿using IceCity.EFCore.Entities;
+
+using IceCity.EFCore2.Repositories.Interfaces;
 
 namespace IceCity.EFCore.Services;
 
 public class HouseService
 {
-    private readonly AppDbContext context;
+    private readonly IHouseRepository repository;
 
-    public HouseService(AppDbContext context)
+    public HouseService(IHouseRepository repository)
     {
-        this.context = context;
+        this.repository = repository;
     }
 
-    public void Create(House house)
+    public async Task CreateAsync(House house)
     {
-        context.Houses.Add(house);
-        context.SaveChanges();
+        await repository.AddAsync(house);
+        await repository.SaveChangesAsync();
     }
 
-    public List<House> GetAll()
+    public async Task<List<House>> GetAllAsync()
     {
-        return context.Houses.ToList();
+        return (await repository.GetAllAsync()).ToList();
     }
 
-    public House? GetById(int id)
+    public async Task<House?> GetByIdAsync(int id)
     {
-        return context.Houses.Find(id);
+        return await repository.GetByIdAsync(id);
     }
 
-    public void Update(House house)
+    public async Task UpdateAsync(House house)
     {
-        context.Houses.Update(house);
-        context.SaveChanges();
+        repository.Update(house);
+        await repository.SaveChangesAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var house = context.Houses.Find(id);
+        var house = await repository.GetByIdAsync(id);
 
-        if (house != null)
-        {
-            context.Houses.Remove(house);
-            context.SaveChanges();
-        }
+        if (house is null)
+            return;
+
+        repository.Delete(house);
+        await repository.SaveChangesAsync();
     }
 }
