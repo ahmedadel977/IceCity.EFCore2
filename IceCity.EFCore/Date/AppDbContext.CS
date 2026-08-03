@@ -20,6 +20,7 @@ namespace IceCity.EFCore.Data
         public DbSet<Heater> Heaters { get; set; }
         public DbSet<DailyUsage> DailyUsages { get; set; }
         public DbSet<MonthlyReport> MonthlyReports { get; set; }
+        
        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
