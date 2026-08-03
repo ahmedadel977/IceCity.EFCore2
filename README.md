@@ -1,62 +1,83 @@
-# IceCity - Week 6 (Advanced Entity Framework Core)
+# ❄️ IceCity – Entity Framework Core Journey
 
-## Overview
-
-This project is part of the Backend .NET Intermediate Roadmap.
-
-The goal of Week 6 is to apply advanced Entity Framework Core concepts to improve database performance, scalability, and maintainability for the IceCity system.
+> A backend simulation project built with **C#**, **.NET 9**, **Entity Framework Core 9**, and **SQL Server**.
 
 ---
 
-# Technologies
+# 📖 About the Project
 
-- .NET 9
-- C#
-- Entity Framework Core 9
-- SQL Server
+IceCity is a backend simulation project that models a city heating management system.
+
+The system allows managing:
+
+- 👤 Owners
+- 🏠 Houses
+- 🔥 Heaters
+- 📊 Daily Heating Usage
+- 📅 Monthly Reports
+
+The main objective of this project is to practice **Entity Framework Core** by gradually building a real-world application while improving its architecture, maintainability, and performance.
 
 ---
 
-# Features
+# 🚀 Week 5 — Entity Framework Core Fundamentals
 
-## Loading Strategies
+During Week 5, the project was migrated from raw SQL to Entity Framework Core and the database layer was fully implemented.
+
+### ✔️ Implemented
+
+- DbContext & DbSet
+- Fluent API Configurations
+- One-to-Many Relationships
+- Many-to-Many Relationships
+- Data Seeding
+- EF Core Migrations
+- CRUD Operations
+- Change Tracking
+- SaveChanges Interceptors
+- Soft Delete
+- Global Query Filters
+
+**Result**
+
+A clean, maintainable, and fully configured data layer powered by Entity Framework Core.
+
+---
+
+# ⚡ Week 6 — Advanced Entity Framework Core
+
+Week 6 focused on applying advanced EF Core concepts used in enterprise applications.
+
+## 📌 Loading Strategies
 
 - Eager Loading
 - Explicit Loading
-- Lazy Loading Proxies
+- Lazy Loading
 - Include()
 - ThenInclude()
 
 ---
 
-## Advanced Queries
-
-Implemented LINQ queries for:
+## 📌 Advanced Queries
 
 - Top 10 Houses by Monthly Cost
 - Owners Ordered by Total Heating Consumption
 - Daily Usage Between Two Dates
-- Monthly Reports for a Specific Year
+- Monthly Reports by Year
 - Houses Without Heaters
 - Houses With More Than Three Heaters
 - Average Heating Hours by City Zone
 
 ---
 
-## Pagination
-
-Implemented server-side pagination using:
+## 📌 Pagination
 
 - Skip()
 - Take()
 
 ---
 
-## DTO Projection
-
-Created DTOs using Select().
-
-### DTOs
+## 📌 DTO Projection
 
 - HouseSummaryDto
 - OwnerDashboardDto
@@ -64,74 +85,55 @@ Created DTOs using Select().
 
 ---
 
-## Transactions
+## 📌 Transactions
 
-Implemented database transactions when generating monthly reports.
-
-Operations executed in a single transaction:
-
-- Save Daily Usage
-- Calculate Monthly Cost
-- Save Monthly Report
-
-Rollback is performed if any operation fails.
+- Database Transactions
+- Rollback on Failure
 
 ---
 
-## Optimistic Concurrency
+## 📌 Optimistic Concurrency
 
-Implemented optimistic concurrency using RowVersion.
-
-Handled:
-
+- RowVersion
 - DbUpdateConcurrencyException
+- Optimistic Concurrency
 
 ---
 
-## Performance Optimization
-
-Implemented:
+## 📌 Performance Optimization
 
 - AsNoTracking()
 - Split Queries
 - Batch Updates
 - Batch Deletes
 
-Performance comparison included before and after optimization.
-
 ---
 
-## Soft Delete
-
-Implemented Soft Delete using:
-
-- SaveChangesInterceptor
-- Global Query Filters
-
-Deleted records are marked as deleted instead of being permanently removed.
-
----
-
-## Generic Repository Pattern
-
-Implemented:
+## 📌 Repository Pattern
 
 - IGenericRepository<T>
 - GenericRepository<T>
-
-Repositories:
-
 - OwnerRepository
 - HouseRepository
 - HeaterRepository
 - DailyUsageRepository
 - MonthlyReportRepository
 
-All Services were refactored to use repositories instead of accessing DbContext directly.
+All services were refactored to use repositories instead of accessing `DbContext` directly.
 
 ---
 
-# Project Structure
+# 🛠️ Technologies
+
+- C#
+- .NET 9
+- Entity Framework Core 9
+- SQL Server
+- LINQ
+
+---
+
+# 📂 Project Structure
 
 ```text
 IceCity.EFCore
@@ -140,11 +142,11 @@ IceCity.EFCore
 ├── Entities
 ├── Configurations
 ├── DTOs
-├── Interceptors
 ├── Repositories
 │   ├── Interfaces
 │   └── Implementations
 ├── Services
+├── Interceptors
 ├── Migrations
 ├── Docs
 └── Program.cs
@@ -152,29 +154,28 @@ IceCity.EFCore
 
 ---
 
-# Project Highlights
+# 🎯 Learning Outcomes
 
-- Clean Project Structure
-- Advanced EF Core Features
-- Generic Repository Pattern
+Through this project, I gained practical experience with:
+
+- Entity Framework Core Fundamentals
+- Fluent API & Entity Configuration
+- Database Relationships
+- LINQ & Advanced Queries
 - DTO Projection
-- Loading Strategies
-- Transactions
+- Pagination
+- Database Transactions
 - Optimistic Concurrency
 - Performance Optimization
 - Soft Delete
+- Interceptors
+- Generic Repository Pattern
+- Building a Clean and Maintainable Data Layer
 
 ---
 
-# Commit
+# 👨‍💻 Author
 
-```
-Week6-EFCore-Advanced
-```
+**Ahmed Adel**
 
----
-
-# Author
-
-Ahmed Adel
 Backend .NET Developer
